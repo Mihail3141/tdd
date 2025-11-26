@@ -1,15 +1,20 @@
 ﻿using System.Drawing;
 
+
 namespace TagsCloudVisualization;
 
-public class Program
+public static class Program
 {
-    
-    static void Main(string[] args)
+    static void Main()
     {
-        var centre = new Point(100/2,100/2);
-        var cc = new CircularCloudLayouter(centre);
-        var size = new Size(100, 100);
-        var r = cc.PutNextRectangle(size);
+        var imageCenter = new Point(1920/2, 1080/2);
+        var rectangleSize = new Size(200, 85);
+        var imageSize = new Size(1920, 1080);
+        
+        var circularCloudLayouter = new CircularCloudLayouter(imageCenter);
+        var rectangles = circularCloudLayouter.GetCircularCloudRectangles(40,rectangleSize, 0.5);
+        var visualizer = new Render(imageSize);
+        var image = visualizer.CreateRectangleCloud(rectangles);
+        ImageSaver.ImageSave(image, "cloud.png");
     }
 }

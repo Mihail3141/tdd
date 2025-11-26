@@ -5,22 +5,24 @@ namespace TagsCloudVisualization;
 public class CircularCloudLayouter
 {
     private List<Rectangle> Rects { get; }
-    
-    private Size windowSize;
-    
+
+    private Size imageSize;
+
     private readonly PointGenerator pointGenerator;
 
-    public CircularCloudLayouter(Point center, int windowWidth = 1920, int windowHeight = 1080)
+    private readonly Random random = new Random();
+
+    public CircularCloudLayouter(Point center, int imageWidth = 1920, int imageHeight = 1080)
     {
-        if (windowWidth <= 0 || windowHeight <= 0)
-            throw new ArgumentException("Window width or height must be positive");
+        if (imageWidth <= 0 || imageHeight <= 0)
+            throw new ArgumentException("Image width or height must be positive");
         if (center.X <= 0 || center.Y <= 0)
             throw new ArgumentException("Center should be greater than 0");
-        if (center.X >= windowWidth || center.Y >= windowHeight)
-            throw new ArgumentException("Center must be in window");
+        if (center.X >= imageWidth || center.Y >= imageHeight)
+            throw new ArgumentException("Center must be inside image bounds");
         Rects = new List<Rectangle>();
-        windowSize = new Size(windowWidth, windowHeight);
-        pointGenerator = new PointGenerator(center, windowSize);
+        imageSize = new Size(imageWidth, imageHeight);
+        pointGenerator = new PointGenerator(center, imageSize);
     }
 
 
@@ -42,11 +44,25 @@ public class CircularCloudLayouter
         throw new InvalidOperationException($"Failed to find place for the {Rects.Count} rectangle");
     }
 
-    public IEnumerable<Rectangle> GetCircularCloud(int count, Size rectangleSize)
+    public IEnumerable<Rectangle> GetCircularCloudRectangles(int count, Size rectangleSize, double coefficient = 0)
     {
         if (count <= 0)
             throw new ArgumentException("Count must be positive");
+        if (coefficient == 0)
+        {
+            for (var i = 0; i < count; i++)
+                yield return PutNextRectangle(rectangleSize);
+            yield break;
+        }
+        
+        if (coefficient is < 0 or > 1)
+            throw new ArgumentException("Coefficient must be between 0 and 1");
         for (var i = 0; i < count; i++)
-            yield return PutNextRectangle(rectangleSize);
+        {
+            var rnd = random.NextDouble() + coefficient;
+            var rndWidth = (int)Math.Round(rectangleSize.Width * rnd);
+            var rndHeight = (int)Math.Round(rectangleSize.Height * rnd);
+            yield return PutNextRectangle(new Size(rndWidth, rndHeight));
+        }
     }
 }

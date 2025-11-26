@@ -30,18 +30,18 @@ public class PointGeneratorTest
 
     [TestCase(-100, 100)]
     [TestCase(100, -100)]
-    public void PointGenerator_ShouldThrowException_WhenInvalidSize(int width, int height)
+    public void PointGenerator_ShouldThrowException_WhenInvalidImageSize(int imageWidth, int imageHeight)
     {
-        var invalidSize = new Size(width, height);
+        var invalidSize = new Size(imageWidth, imageHeight);
         var act = () => new PointGenerator(validCenter,invalidSize);
 
         act.Should().Throw<ArgumentException>()
-            .WithMessage("Window size must be positive");
+            .WithMessage("Image size must be positive");
     }
 
     [TestCase(-1)]
-
-    public void GetPointsOnSpiral_ShouldThrowException_WhenInvalidParameters(int radius)
+    [TestCase(0)]
+    public void GetPointsOnSpiral_ShouldThrowException_WhenInvalidRadius(int radius)
     {
         var pointGenerator = new PointGenerator(validCenter, validSize);
         var act = () => pointGenerator.GetPointsOnSpiral(0,radius);
