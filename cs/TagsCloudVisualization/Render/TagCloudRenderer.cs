@@ -1,8 +1,8 @@
 ﻿using System.Drawing;
 
-namespace TagsCloudVisualization;
+namespace TagsCloudVisualization.Render;
 
-public class Render(Size imageSize)
+public class TagCloudRenderer(Size imageSize) : ICloudRenderer
 {
     public Bitmap CreateRectangleCloud(IEnumerable<Rectangle> rectangles)
     {

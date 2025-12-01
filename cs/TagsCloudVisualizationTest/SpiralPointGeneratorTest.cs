@@ -1,19 +1,18 @@
 ﻿using System.Drawing;
 using TagsCloudVisualization;
 using FluentAssertions;
+using TagsCloudVisualization.PointGenerator;
 
 namespace TagsCloudVisualizationTest;
 
 public class SpiralPointGeneratorTest
 {
     private Point validCenter;
-    private Size validSize;
 
     [SetUp]
     public void Setup()
     {
         validCenter = new Point(1920 / 2, 1080 / 2);
-        validSize = new Size(1920, 1080);
     }
 
 
@@ -27,17 +26,6 @@ public class SpiralPointGeneratorTest
         act.Should().Throw<ArgumentException>()
             .WithMessage("Center coordinates must be non-negative");
     }
-
-    // [TestCase(-100, 100)]
-    // [TestCase(100, -100)]
-    // public void PointGenerator_ShouldThrowException_WhenInvalidImageSize(int imageWidth, int imageHeight)
-    // {
-    //     var invalidSize = new Size(imageWidth, imageHeight);
-    //     var act = () => new SpiralPointGenerator(validCenter);
-    //
-    //     act.Should().Throw<ArgumentException>()
-    //         .WithMessage("Image size must be positive");
-    // }
 
     [TestCase(-1)]
     [TestCase(0)]
@@ -58,7 +46,7 @@ public class SpiralPointGeneratorTest
             .Take(100);
 
         actualPoints.Should().HaveCountGreaterThan(1);
-        
+
         var prevDistance = GetDistance(actualPoints.First(), validCenter);
         foreach (var point in actualPoints.Skip(1))
         {

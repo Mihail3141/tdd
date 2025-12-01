@@ -1,6 +1,6 @@
 ﻿using System.Drawing;
 using FluentAssertions;
-using TagsCloudVisualization;
+using TagsCloudVisualization.PointProvider;
 
 namespace TagsCloudVisualizationTest;
 
@@ -13,18 +13,7 @@ public class CircularCloudLayouterTest
     {
         validCenter = new Point(1920 / 2, 1080 / 2);
     }
-
-
-    // [TestCase(-1920, 1080)]
-    // [TestCase(1920, -1080)]
-    // public void CircularCloudLayouter_ShouldThrowException_WhenInvalidWindowSize(int imageWidth, int imageHeight)
-    // {
-    //     var act = () => new CircularCloudLayouter(validCenter, imageWidth, imageHeight);
-    //
-    //     act.Should().Throw<ArgumentException>()
-    //         .WithMessage("Image width or height must be positive");
-    // }
-
+    
     [TestCase(-500, 500)]
     [TestCase(500, -500)]
     public void CircularCloudLayouter_ShouldThrowException_WhenInvalidCenter(int centerX, int centerY)
@@ -35,19 +24,7 @@ public class CircularCloudLayouterTest
         act.Should().Throw<ArgumentException>()
             .WithMessage("Center should be greater than 0");
     }
-
-
-    // [TestCase(1930, 500)]
-    // [TestCase(500, 1090)]
-    // public void CircularCloudLayouter_ShouldThrowException_WhenCenterIsOutsideImage(int centerX, int centerY)
-    // {
-    //     var center = new Point(centerX, centerY);
-    //     var act = () => new CircularCloudLayouter(center);
-    //
-    //     act.Should().Throw<ArgumentException>()
-    //         .WithMessage("Center must be inside image bounds");
-    // }
-
+    
     [TestCase(-100, 100)]
     [TestCase(100, -100)]
     [TestCase(0, 100)]
@@ -60,24 +37,7 @@ public class CircularCloudLayouterTest
         act.Should().Throw<ArgumentException>()
             .WithMessage("Rectangle size must be positive");
     }
-
-    // [Test]
-    // public void PutNextRectangle_ShouldThrowException_WhenNoPlaceForNextRectangle()
-    // {
-    //     var center = new Point(200, 200);
-    //     var circularCloud = new CircularCloudLayouter(center, 400, 400);
-    //     var rectangles = new List<Rectangle>();
-    //     var rectangleSize = new Size(40, 40);
-    //     for (var i = 0; i < 111; i++)
-    //     {
-    //         var rect = circularCloud.PutNextRectangle(rectangleSize);
-    //         rectangles.Add(rect);
-    //     }
-    //
-    //     var act = () => circularCloud.PutNextRectangle(rectangleSize);
-    //     act.Should().Throw<InvalidOperationException>()
-    //         .WithMessage($"Failed to find place for the * rectangle");
-    // }
+    
 
     [Test]
     public void PutNextRectangle_ShouldNotProduceIntersectingRectangles_WhenCalledMultipleTimes()

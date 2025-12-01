@@ -2,7 +2,7 @@
 using System.Drawing.Imaging;
 using System.Diagnostics;
 
-namespace TagsCloudVisualization;
+namespace TagsCloudVisualization.Render;
 
 public static class ImageSaver
 {

@@ -1,6 +1,6 @@
 ﻿using System.Drawing;
 using FluentAssertions;
-using TagsCloudVisualization;
+using TagsCloudVisualization.PointProvider;
 
 namespace TagsCloudVisualizationTest;
 
@@ -23,7 +23,7 @@ public class SpiralPointProviderTest
         var spiralPointProvider = new SpiralPointProvider(validCenter);
         
         var act = () => spiralPointProvider
-            .GetCircularCloudRectangles(count, validRectangleSize)
+            .GetRectangles(count, validRectangleSize)
             .ToList();
 
         act.Should().Throw<ArgumentException>()
@@ -36,7 +36,7 @@ public class SpiralPointProviderTest
         var spiralPointProvider = new SpiralPointProvider(validCenter);
 
         var rectangles = spiralPointProvider
-            .GetCircularCloudRectangles(100, validRectangleSize)
+            .GetRectangles(100, validRectangleSize)
             .ToList();
 
         for (var i = 0; i < rectangles.Count; i++)
@@ -51,12 +51,12 @@ public class SpiralPointProviderTest
     
     [TestCase(-1)]
     [TestCase(2)]
-    public void GetCircularCloudRectangles_ShouldThrowException_WhenInvalidCoefficient(double minScaleFactor)
+    public void GetRandomSizedRectangles_ShouldThrowException_WhenInvalidCoefficient(double minScaleFactor)
     {
         var spiralPointProvider = new SpiralPointProvider(validCenter);
 
         var act = () => spiralPointProvider
-            .GetCircularCloudRectangles(100, validRectangleSize, minScaleFactor)
+            .GetRandomSizedRectangles(100, validRectangleSize, minScaleFactor)
             .ToList();
         
         act.Should().Throw<ArgumentException>()
@@ -67,12 +67,12 @@ public class SpiralPointProviderTest
     [TestCase(0.2)]
     [TestCase(0.5)]
     [TestCase(0.9)]
-    public void GetCircularCloudRectangles_ShouldNotProduceIntersectingRectangles_WhenValidCoefficient(double minScaleFactor)
+    public void GetRandomSizedRectangles_ShouldNotProduceIntersectingRectangles_WhenValidCoefficient(double minScaleFactor)
     {
         var spiralPointProvider = new SpiralPointProvider(validCenter);
 
         var rectangles = spiralPointProvider
-            .GetCircularCloudRectangles(100, validRectangleSize, minScaleFactor)
+            .GetRandomSizedRectangles(100, validRectangleSize, minScaleFactor)
             .ToList();
 
         for (var i = 0; i < rectangles.Count; i++)

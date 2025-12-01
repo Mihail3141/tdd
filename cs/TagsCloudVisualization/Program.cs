@@ -1,4 +1,6 @@
 ﻿using System.Drawing;
+using TagsCloudVisualization.PointProvider;
+using TagsCloudVisualization.Render;
 
 
 namespace TagsCloudVisualization;
@@ -12,8 +14,8 @@ public static class Program
         var imageSize = new Size(1920, 1080);
         
         var spiralPointProvider = new SpiralPointProvider(imageCenter);
-        var rectangles = spiralPointProvider.GetCircularCloudRectangles(40,rectangleSize, 0.5);
-        var visualizer = new Render(imageSize);
+        var rectangles = spiralPointProvider.GetRandomSizedRectangles(40,rectangleSize, 0.5);
+        var visualizer = new TagCloudRenderer(imageSize);
         var image = visualizer.CreateRectangleCloud(rectangles);
         ImageSaver.SaveImage(image, "cloud.png");
     }
