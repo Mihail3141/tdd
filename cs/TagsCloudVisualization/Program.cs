@@ -11,8 +11,8 @@ public static class Program
         var rectangleSize = new Size(200, 85);
         var imageSize = new Size(1920, 1080);
         
-        var circularCloudLayouter = new CircularCloudLayouter(imageCenter);
-        var rectangles = circularCloudLayouter.GetCircularCloudRectangles(40,rectangleSize, 0.5);
+        var spiralPointProvider = new SpiralPointProvider(imageCenter);
+        var rectangles = spiralPointProvider.GetCircularCloudRectangles(40,rectangleSize, 0.5);
         var visualizer = new Render(imageSize);
         var image = visualizer.CreateRectangleCloud(rectangles);
         ImageSaver.SaveImage(image, "cloud.png");

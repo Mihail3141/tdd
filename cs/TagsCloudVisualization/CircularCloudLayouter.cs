@@ -5,17 +5,18 @@ namespace TagsCloudVisualization;
 public class CircularCloudLayouter
 {
     private List<Rectangle> Rectangles { get; }
-    
-    private readonly SpiralPointGenerator spiralPointGenerator;
 
-    private readonly Random random = new Random();
+    private readonly SpiralPointGenerator spiralPointGenerator;
 
     private int maxPointCount = 10000;
 
     public void SetMaxPointCount(int maxPointCount)
     {
+        if (maxPointCount < 0)
+            throw new ArgumentException("maxPointCount must be greater than 0");
         this.maxPointCount = maxPointCount;
     }
+
     public CircularCloudLayouter(Point center)
     {
         if (center.X <= 0 || center.Y <= 0)
@@ -31,8 +32,9 @@ public class CircularCloudLayouter
             throw new ArgumentException("Rectangle size must be positive");
 
         var points = spiralPointGenerator
-            .GetNextPoint()
+            .GetPoints()
             .Take(maxPointCount);
+
         foreach (var point in points)
         {
             var rectangle = new Rectangle(point, rectangleSize);
@@ -43,27 +45,5 @@ public class CircularCloudLayouter
         }
 
         throw new InvalidOperationException($"Failed to find place for the {Rectangles.Count} rectangle");
-    }
-
-    public IEnumerable<Rectangle> GetCircularCloudRectangles(int count, Size rectangleSize, double coefficient = 0)
-    {
-        if (count <= 0)
-            throw new ArgumentException("Count must be positive");
-        if (coefficient == 0)
-        {
-            for (var i = 0; i < count; i++)
-                yield return PutNextRectangle(rectangleSize);
-            yield break;
-        }
-        
-        if (coefficient is < 0 or > 1)
-            throw new ArgumentException("Coefficient must be between 0 and 1");
-        for (var i = 0; i < count; i++)
-        {
-            var rnd = random.NextDouble() + coefficient;
-            var rndWidth = (int)Math.Round(rectangleSize.Width * rnd);
-            var rndHeight = (int)Math.Round(rectangleSize.Height * rnd);
-            yield return PutNextRectangle(new Size(rndWidth, rndHeight));
-        }
     }
 }

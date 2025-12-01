@@ -19,7 +19,7 @@ public class SpiralPointGenerator : IPointGenerator
         this.center = center;
     }
 
-    public IEnumerable<Point> GetNextPoint()
+    public IEnumerable<Point> GetPoints()
     {
         var currentAngle = 0.0;
         while (true)

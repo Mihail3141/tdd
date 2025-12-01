@@ -54,7 +54,7 @@ public class SpiralPointGeneratorTest
     {
         var pointGenerator = new SpiralPointGenerator(validCenter, 50, Math.PI / 12);
         var actualPoints = pointGenerator
-            .GetNextPoint()
+            .GetPoints()
             .Take(100);
 
         actualPoints.Should().HaveCountGreaterThan(1);
@@ -73,7 +73,7 @@ public class SpiralPointGeneratorTest
     {
         var pointGenerator = new SpiralPointGenerator(validCenter, 50, Math.PI / 12);
         var actualPoints = pointGenerator
-            .GetNextPoint()
+            .GetPoints()
             .Take(100);
 
         actualPoints.Should().HaveCountGreaterThan(1);
