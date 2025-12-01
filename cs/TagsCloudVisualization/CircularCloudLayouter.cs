@@ -5,24 +5,23 @@ namespace TagsCloudVisualization;
 public class CircularCloudLayouter
 {
     private List<Rectangle> Rectangles { get; }
-
-    private Size imageSize;
-
+    
     private readonly SpiralPointGenerator spiralPointGenerator;
 
     private readonly Random random = new Random();
 
-    public CircularCloudLayouter(Point center, int imageWidth = 1920, int imageHeight = 1080)
+    private int maxPointCount = 10000;
+
+    public void SetMaxPointCount(int maxPointCount)
     {
-        if (imageWidth <= 0 || imageHeight <= 0)
-            throw new ArgumentException("Image width or height must be positive");
+        this.maxPointCount = maxPointCount;
+    }
+    public CircularCloudLayouter(Point center)
+    {
         if (center.X <= 0 || center.Y <= 0)
             throw new ArgumentException("Center should be greater than 0");
-        if (center.X >= imageWidth || center.Y >= imageHeight)
-            throw new ArgumentException("Center must be inside image bounds");
         Rectangles = new List<Rectangle>();
-        imageSize = new Size(imageWidth, imageHeight);
-        spiralPointGenerator = new SpiralPointGenerator(center, imageSize);
+        spiralPointGenerator = new SpiralPointGenerator(center);
     }
 
 
@@ -31,7 +30,9 @@ public class CircularCloudLayouter
         if (rectangleSize.Width <= 0 || rectangleSize.Height <= 0)
             throw new ArgumentException("Rectangle size must be positive");
 
-        var points = spiralPointGenerator.GetPointsOnSpiral();
+        var points = spiralPointGenerator
+            .GetNextPoint()
+            .Take(maxPointCount);
         foreach (var point in points)
         {
             var rectangle = new Rectangle(point, rectangleSize);

@@ -4,5 +4,5 @@ namespace TagsCloudVisualization;
 
 public interface IPointGenerator
 {
-    public IEnumerable<Point> GetPointsOnSpiral();
+    public IEnumerable<Point> GetNextPoint();
 }

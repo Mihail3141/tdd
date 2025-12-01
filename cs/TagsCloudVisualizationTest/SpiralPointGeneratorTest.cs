@@ -12,7 +12,7 @@ public class SpiralPointGeneratorTest
     [SetUp]
     public void Setup()
     {
-        validCenter = new Point(1920/2, 1080/2);
+        validCenter = new Point(1920 / 2, 1080 / 2);
         validSize = new Size(1920, 1080);
     }
 
@@ -22,28 +22,28 @@ public class SpiralPointGeneratorTest
     public void PointGenerator_ShouldThrowException_WhenInvalidCenter(int x, int y)
     {
         var invalidCenter = new Point(x, y);
-        var act = () => new SpiralPointGenerator(invalidCenter, validSize);
+        var act = () => new SpiralPointGenerator(invalidCenter);
 
         act.Should().Throw<ArgumentException>()
             .WithMessage("Center coordinates must be non-negative");
     }
 
-    [TestCase(-100, 100)]
-    [TestCase(100, -100)]
-    public void PointGenerator_ShouldThrowException_WhenInvalidImageSize(int imageWidth, int imageHeight)
-    {
-        var invalidSize = new Size(imageWidth, imageHeight);
-        var act = () => new SpiralPointGenerator(validCenter,invalidSize);
-
-        act.Should().Throw<ArgumentException>()
-            .WithMessage("Image size must be positive");
-    }
+    // [TestCase(-100, 100)]
+    // [TestCase(100, -100)]
+    // public void PointGenerator_ShouldThrowException_WhenInvalidImageSize(int imageWidth, int imageHeight)
+    // {
+    //     var invalidSize = new Size(imageWidth, imageHeight);
+    //     var act = () => new SpiralPointGenerator(validCenter);
+    //
+    //     act.Should().Throw<ArgumentException>()
+    //         .WithMessage("Image size must be positive");
+    // }
 
     [TestCase(-1)]
     [TestCase(0)]
     public void PointGenerator_ShouldThrowException_WhenInvalidRadius(int radius)
     {
-        var act = () => new SpiralPointGenerator(validCenter, validSize, radius);
+        var act = () => new SpiralPointGenerator(validCenter, radius);
 
         act.Should().Throw<ArgumentException>()
             .WithMessage("Radius must be positive");
@@ -52,12 +52,14 @@ public class SpiralPointGeneratorTest
     [Test]
     public void GetPointsOnSpiral_ShouldEachNextPointFartherFromCenter_WhenValidParameters()
     {
-        var pointGenerator = new SpiralPointGenerator(validCenter,validSize, 50, Math.PI / 12);
+        var pointGenerator = new SpiralPointGenerator(validCenter, 50, Math.PI / 12);
         var actualPoints = pointGenerator
-            .GetPointsOnSpiral()
-            .ToList();
+            .GetNextPoint()
+            .Take(100);
+
         actualPoints.Should().HaveCountGreaterThan(1);
-        var prevDistance = GetDistance(actualPoints[0], validCenter);
+        
+        var prevDistance = GetDistance(actualPoints.First(), validCenter);
         foreach (var point in actualPoints.Skip(1))
         {
             var currentDistance = GetDistance(point, validCenter);
@@ -69,14 +71,14 @@ public class SpiralPointGeneratorTest
     [Test]
     public void GetPointsOnSpiral_ShouldAngleGrowMonotonically_WhenValidParameters()
     {
-        var pointGenerator = new SpiralPointGenerator(validCenter,validSize, 50, Math.PI / 12);
+        var pointGenerator = new SpiralPointGenerator(validCenter, 50, Math.PI / 12);
         var actualPoints = pointGenerator
-            .GetPointsOnSpiral()
-            .ToList();
-        actualPoints.Should().HaveCountGreaterThan(1);
-        
-        var prevAngle = GetAngle(actualPoints[0], validCenter);
+            .GetNextPoint()
+            .Take(100);
 
+        actualPoints.Should().HaveCountGreaterThan(1);
+
+        var prevAngle = GetAngle(actualPoints.First(), validCenter);
         foreach (var point in actualPoints.Skip(1))
         {
             var currentAngle = GetAngle(point, validCenter);
@@ -90,9 +92,9 @@ public class SpiralPointGeneratorTest
     {
         var result = angle1 - angle2;
         while (result <= -Math.PI)
-            result += 2*Math.PI;
+            result += 2 * Math.PI;
         while (result > Math.PI)
-            result -= 2*Math.PI;
+            result -= 2 * Math.PI;
         return result;
     }
 
@@ -106,7 +108,7 @@ public class SpiralPointGeneratorTest
     private static double GetAngle(Point point1, Point point2)
     {
         var dx = point1.X - point2.X;
-        var  dy = point1.Y - point2.Y;
+        var dy = point1.Y - point2.Y;
         return Math.Atan2(dy, dx);
     }
 }
