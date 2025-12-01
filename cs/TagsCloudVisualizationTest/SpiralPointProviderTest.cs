@@ -13,7 +13,7 @@ public class SpiralPointProviderTest
     public void Setup()
     {
         validCenter = new Point(1920 / 2, 1080 / 2);
-        validRectangleSize = new Size(20, 10);
+        validRectangleSize = new Size(50, 35);
     }
     
     [TestCase(-1)]
@@ -83,5 +83,33 @@ public class SpiralPointProviderTest
                     .Should().BeFalse($"rect #{i} should not intersect rect #{j}");
             }
         }
+    }
+
+    [Test]
+    public void FindMinRadius_ShouldReturnRadiusOfEnclosingCircle_WhenValidParameters()
+    {
+        var spiralPointProvider = new SpiralPointProvider(validCenter);
+        var rectangles = spiralPointProvider
+            .GetRandomSizedRectangles(100, validRectangleSize, 0.5)
+            .ToList();
+        
+        var circleRadius = Geometry.FindMinRadius(rectangles, validCenter);
+        
+        Geometry.AreRectanglesInsideCircle(rectangles, validCenter, circleRadius).Should().BeTrue();
+        Geometry.AreRectanglesInsideCircle(rectangles, validCenter, circleRadius-1).Should().BeFalse();
+    }
+    
+    [Test]
+    public void GetRandomSizedRectangles_ShouldEnsurePackingDensity_WhenValidParameters()
+    {
+        var spiralPointProvider = new SpiralPointProvider(validCenter);
+        var rectangles = spiralPointProvider
+            .GetRandomSizedRectangles(100, validRectangleSize, 0.5)
+            .ToList();
+        
+        var circleRadius = Geometry.FindMinRadius(rectangles, validCenter);
+        var packingDensity = Geometry.GetRectanglesPackingDensity(rectangles, circleRadius);
+        
+        packingDensity.Should().BeGreaterThan(0.4);
     }
 }

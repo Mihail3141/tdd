@@ -1,5 +1,4 @@
 ﻿using System.Drawing;
-using TagsCloudVisualization;
 using FluentAssertions;
 using TagsCloudVisualization.PointGenerator;
 
@@ -47,10 +46,10 @@ public class SpiralPointGeneratorTest
 
         actualPoints.Should().HaveCountGreaterThan(1);
 
-        var prevDistance = GetDistance(actualPoints.First(), validCenter);
+        var prevDistance = Geometry.GetDistance(actualPoints.First(), validCenter);
         foreach (var point in actualPoints.Skip(1))
         {
-            var currentDistance = GetDistance(point, validCenter);
+            var currentDistance = Geometry.GetDistance(point, validCenter);
             currentDistance.Should().BeGreaterThanOrEqualTo(prevDistance);
             prevDistance = currentDistance;
         }
@@ -66,37 +65,13 @@ public class SpiralPointGeneratorTest
 
         actualPoints.Should().HaveCountGreaterThan(1);
 
-        var prevAngle = GetAngle(actualPoints.First(), validCenter);
+        var prevAngle = Geometry.GetAngle(actualPoints.First(), validCenter);
         foreach (var point in actualPoints.Skip(1))
         {
-            var currentAngle = GetAngle(point, validCenter);
-            var delta = GetNormalizedAngleDifference(currentAngle, prevAngle);
+            var currentAngle = Geometry.GetAngle(point, validCenter);
+            var delta = Geometry.GetNormalizedAngleDifference(currentAngle, prevAngle);
             delta.Should().BeGreaterThan(-1e-5);
             prevAngle = currentAngle;
         }
-    }
-
-    private static double GetNormalizedAngleDifference(double angle1, double angle2)
-    {
-        var result = angle1 - angle2;
-        while (result <= -Math.PI)
-            result += 2 * Math.PI;
-        while (result > Math.PI)
-            result -= 2 * Math.PI;
-        return result;
-    }
-
-    private static double GetDistance(Point point1, Point point2)
-    {
-        var dx = point1.X - point2.X;
-        var dy = point1.Y - point2.Y;
-        return Math.Sqrt(dx * dx + dy * dy);
-    }
-
-    private static double GetAngle(Point point1, Point point2)
-    {
-        var dx = point1.X - point2.X;
-        var dy = point1.Y - point2.Y;
-        return Math.Atan2(dy, dx);
     }
 }

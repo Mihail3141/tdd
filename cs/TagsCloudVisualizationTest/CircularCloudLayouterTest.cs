@@ -19,6 +19,7 @@ public class CircularCloudLayouterTest
     public void CircularCloudLayouter_ShouldThrowException_WhenInvalidCenter(int centerX, int centerY)
     {
         var invalidCenter = new Point(centerX, centerY);
+        
         var act = () => new CircularCloudLayouter(invalidCenter);
 
         act.Should().Throw<ArgumentException>()
@@ -32,6 +33,7 @@ public class CircularCloudLayouterTest
     public void PutNextRectangle_ShouldThrowException_WhenInvalidRectangleSize(int rectangleWidth, int rectangleHeight)
     {
         var circularCloud = new CircularCloudLayouter(validCenter);
+        
         var act = () => circularCloud.PutNextRectangle(new Size(rectangleWidth, rectangleHeight));
 
         act.Should().Throw<ArgumentException>()
