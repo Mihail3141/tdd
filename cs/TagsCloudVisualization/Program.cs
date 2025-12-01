@@ -17,6 +17,6 @@ public static class Program
         var rectangles = spiralPointProvider.GetRandomSizedRectangles(40,rectangleSize, 0.3);
         var visualizer = new TagCloudRenderer(imageSize);
         var image = visualizer.CreateRectangleCloud(rectangles);
-        ImageSaver.SaveImage(image, "cloud.png");
+        ImageSaver.Save(image, "cloud.png");
     }
 }

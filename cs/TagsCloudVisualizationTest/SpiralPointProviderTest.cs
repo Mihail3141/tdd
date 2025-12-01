@@ -1,6 +1,8 @@
 ﻿using System.Drawing;
 using FluentAssertions;
+using NUnit.Framework.Interfaces;
 using TagsCloudVisualization.PointProvider;
+using TagsCloudVisualization.Render;
 
 namespace TagsCloudVisualizationTest;
 
@@ -8,12 +10,31 @@ public class SpiralPointProviderTest
 {
     private Point validCenter;
     private Size validRectangleSize;
-
+    private List<Rectangle> testingRectangles;
+    private string projectDir;
+    
     [SetUp]
     public void Setup()
     {
         validCenter = new Point(1920 / 2, 1080 / 2);
         validRectangleSize = new Size(50, 35);
+        projectDir = Directory.GetParent(Environment.CurrentDirectory)!.Parent!.Parent!.FullName;
+    }
+
+    [TearDown]
+    public void TearDown()
+    {
+        var currentContext = TestContext.CurrentContext;
+        if (currentContext.Result.Outcome.Status != TestStatus.Failed) 
+            return;
+        var renderer = new TagCloudRenderer(new Size(1920, 1080));
+        var bitmap = renderer.CreateRectangleCloud(testingRectangles);
+        var fileName = $"{currentContext.Test.Name}.png";
+        var imagesDir = Path.Combine(projectDir, "Image");
+        var path = Path.Combine(imagesDir, fileName);
+        
+        ImageSaver.Save(bitmap, fileName);
+        Console.WriteLine($"Tag cloud visualization saved to file {path}");
     }
     
     [TestCase(-1)]
@@ -38,7 +59,8 @@ public class SpiralPointProviderTest
         var rectangles = spiralPointProvider
             .GetRectangles(100, validRectangleSize)
             .ToList();
-
+        testingRectangles = rectangles;
+        
         for (var i = 0; i < rectangles.Count; i++)
         {
             for (var j = i + 1; j < rectangles.Count; j++)
@@ -74,7 +96,8 @@ public class SpiralPointProviderTest
         var rectangles = spiralPointProvider
             .GetRandomSizedRectangles(100, validRectangleSize, minScaleFactor)
             .ToList();
-
+        testingRectangles = rectangles;
+        
         for (var i = 0; i < rectangles.Count; i++)
         {
             for (var j = i + 1; j < rectangles.Count; j++)
@@ -92,6 +115,7 @@ public class SpiralPointProviderTest
         var rectangles = spiralPointProvider
             .GetRandomSizedRectangles(100, validRectangleSize, 0.5)
             .ToList();
+        testingRectangles = rectangles;
         
         var circleRadius = Geometry.FindMinRadius(rectangles, validCenter);
         
@@ -106,6 +130,7 @@ public class SpiralPointProviderTest
         var rectangles = spiralPointProvider
             .GetRandomSizedRectangles(100, validRectangleSize, 0.5)
             .ToList();
+        testingRectangles = rectangles;
         
         var circleRadius = Geometry.FindMinRadius(rectangles, validCenter);
         var packingDensity = Geometry.GetRectanglesPackingDensity(rectangles, circleRadius);
