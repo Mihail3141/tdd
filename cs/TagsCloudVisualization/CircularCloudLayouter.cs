@@ -4,11 +4,11 @@ namespace TagsCloudVisualization;
 
 public class CircularCloudLayouter
 {
-    private List<Rectangle> Rects { get; }
+    private List<Rectangle> Rectangles { get; }
 
     private Size imageSize;
 
-    private readonly PointGenerator pointGenerator;
+    private readonly SpiralPointGenerator spiralPointGenerator;
 
     private readonly Random random = new Random();
 
@@ -20,9 +20,9 @@ public class CircularCloudLayouter
             throw new ArgumentException("Center should be greater than 0");
         if (center.X >= imageWidth || center.Y >= imageHeight)
             throw new ArgumentException("Center must be inside image bounds");
-        Rects = new List<Rectangle>();
+        Rectangles = new List<Rectangle>();
         imageSize = new Size(imageWidth, imageHeight);
-        pointGenerator = new PointGenerator(center, imageSize);
+        spiralPointGenerator = new SpiralPointGenerator(center, imageSize);
     }
 
 
@@ -31,17 +31,17 @@ public class CircularCloudLayouter
         if (rectangleSize.Width <= 0 || rectangleSize.Height <= 0)
             throw new ArgumentException("Rectangle size must be positive");
 
-        var points = pointGenerator.GetPointsOnSpiral();
+        var points = spiralPointGenerator.GetPointsOnSpiral();
         foreach (var point in points)
         {
             var rectangle = new Rectangle(point, rectangleSize);
-            if (Rects.Any(rectangle.IntersectsWith))
+            if (Rectangles.Any(rectangle.IntersectsWith))
                 continue;
-            Rects.Add(rectangle);
+            Rectangles.Add(rectangle);
             return rectangle;
         }
 
-        throw new InvalidOperationException($"Failed to find place for the {Rects.Count} rectangle");
+        throw new InvalidOperationException($"Failed to find place for the {Rectangles.Count} rectangle");
     }
 
     public IEnumerable<Rectangle> GetCircularCloudRectangles(int count, Size rectangleSize, double coefficient = 0)

@@ -15,6 +15,6 @@ public static class Program
         var rectangles = circularCloudLayouter.GetCircularCloudRectangles(40,rectangleSize, 0.5);
         var visualizer = new Render(imageSize);
         var image = visualizer.CreateRectangleCloud(rectangles);
-        ImageSaver.ImageSave(image, "cloud.png");
+        ImageSaver.SaveImage(image, "cloud.png");
     }
 }

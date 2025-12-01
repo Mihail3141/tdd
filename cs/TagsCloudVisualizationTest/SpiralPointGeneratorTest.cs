@@ -4,7 +4,7 @@ using FluentAssertions;
 
 namespace TagsCloudVisualizationTest;
 
-public class PointGeneratorTest
+public class SpiralPointGeneratorTest
 {
     private Point validCenter;
     private Size validSize;
@@ -22,7 +22,7 @@ public class PointGeneratorTest
     public void PointGenerator_ShouldThrowException_WhenInvalidCenter(int x, int y)
     {
         var invalidCenter = new Point(x, y);
-        var act = () => new PointGenerator(invalidCenter, validSize);
+        var act = () => new SpiralPointGenerator(invalidCenter, validSize);
 
         act.Should().Throw<ArgumentException>()
             .WithMessage("Center coordinates must be non-negative");
@@ -33,7 +33,7 @@ public class PointGeneratorTest
     public void PointGenerator_ShouldThrowException_WhenInvalidImageSize(int imageWidth, int imageHeight)
     {
         var invalidSize = new Size(imageWidth, imageHeight);
-        var act = () => new PointGenerator(validCenter,invalidSize);
+        var act = () => new SpiralPointGenerator(validCenter,invalidSize);
 
         act.Should().Throw<ArgumentException>()
             .WithMessage("Image size must be positive");
@@ -41,21 +41,20 @@ public class PointGeneratorTest
 
     [TestCase(-1)]
     [TestCase(0)]
-    public void GetPointsOnSpiral_ShouldThrowException_WhenInvalidRadius(int radius)
+    public void PointGenerator_ShouldThrowException_WhenInvalidRadius(int radius)
     {
-        var pointGenerator = new PointGenerator(validCenter, validSize);
-        var act = () => pointGenerator.GetPointsOnSpiral(0,radius);
+        var act = () => new SpiralPointGenerator(validCenter, validSize, radius);
 
-        act.Enumerating().Should().Throw<ArgumentException>()
+        act.Should().Throw<ArgumentException>()
             .WithMessage("Radius must be positive");
     }
 
     [Test]
     public void GetPointsOnSpiral_ShouldEachNextPointFartherFromCenter_WhenValidParameters()
     {
-        var pointGenerator = new PointGenerator(validCenter,validSize);
+        var pointGenerator = new SpiralPointGenerator(validCenter,validSize, 50, Math.PI / 12);
         var actualPoints = pointGenerator
-            .GetPointsOnSpiral(Math.PI/12, 50)
+            .GetPointsOnSpiral()
             .ToList();
         actualPoints.Should().HaveCountGreaterThan(1);
         var prevDistance = GetDistance(actualPoints[0], validCenter);
@@ -70,9 +69,9 @@ public class PointGeneratorTest
     [Test]
     public void GetPointsOnSpiral_ShouldAngleGrowMonotonically_WhenValidParameters()
     {
-        var pointGenerator = new PointGenerator(validCenter,validSize);
+        var pointGenerator = new SpiralPointGenerator(validCenter,validSize, 50, Math.PI / 12);
         var actualPoints = pointGenerator
-            .GetPointsOnSpiral(Math.PI/12, 50)
+            .GetPointsOnSpiral()
             .ToList();
         actualPoints.Should().HaveCountGreaterThan(1);
         
