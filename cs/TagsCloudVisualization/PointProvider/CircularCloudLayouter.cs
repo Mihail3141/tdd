@@ -13,7 +13,7 @@ public class CircularCloudLayouter
 
     public void SetMaxPointCount(int maxPointCount)
     {
-        if (maxPointCount < 0)
+        if (maxPointCount <= 0)
             throw new ArgumentException("maxPointCount must be greater than 0");
         this.maxPointCount = maxPointCount;
     }
@@ -45,6 +45,6 @@ public class CircularCloudLayouter
             return rectangle;
         }
 
-        throw new InvalidOperationException($"Failed to find place for the {Rectangles.Count} rectangle");
+        throw new ArgumentException($"Failed to find place for the {Rectangles.Count} rectangle");
     }
 }
