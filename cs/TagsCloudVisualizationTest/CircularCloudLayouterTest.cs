@@ -81,14 +81,7 @@ public class CircularCloudLayouterTest
             var rect = circularCloud.PutNextRectangle(rectangleSize);
             rectangles.Add(rect);
         }
-
-        for (var i = 0; i < rectangles.Count; i++)
-        {
-            for (var j = i + 1; j < rectangles.Count; j++)
-            {
-                rectangles[i].IntersectsWith(rectangles[j])
-                    .Should().BeFalse($"rect #{i} should not intersect rect #{j}");
-            }
-        }
+        
+        Geometry.HasIntersectingRectangles(rectangles).Should().BeFalse();
     }
 }

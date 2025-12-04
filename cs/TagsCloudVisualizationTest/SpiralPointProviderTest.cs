@@ -61,14 +61,7 @@ public class SpiralPointProviderTest
             .ToList();
         testingRectangles = rectangles;
         
-        for (var i = 0; i < rectangles.Count; i++)
-        {
-            for (var j = i + 1; j < rectangles.Count; j++)
-            {
-                rectangles[i].IntersectsWith(rectangles[j])
-                    .Should().BeFalse($"rect #{i} should not intersect rect #{j}");
-            }
-        }
+        Geometry.HasIntersectingRectangles(rectangles).Should().BeFalse();
     }
     
     [TestCase(-1)]
@@ -98,14 +91,7 @@ public class SpiralPointProviderTest
             .ToList();
         testingRectangles = rectangles;
         
-        for (var i = 0; i < rectangles.Count; i++)
-        {
-            for (var j = i + 1; j < rectangles.Count; j++)
-            {
-                rectangles[i].IntersectsWith(rectangles[j])
-                    .Should().BeFalse($"rect #{i} should not intersect rect #{j}");
-            }
-        }
+        Geometry.HasIntersectingRectangles(rectangles).Should().BeFalse();
     }
 
     [Test]

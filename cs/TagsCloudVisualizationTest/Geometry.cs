@@ -64,4 +64,19 @@ public static class Geometry
         var circleArea = Math.PI * radius * radius;
         return rectangleTotalArea/circleArea;
     }
+
+
+    public static bool HasIntersectingRectangles(List<Rectangle> rectangles)
+    {
+        for (var i = 0; i < rectangles.Count; i++)
+        {
+            for (var j = i + 1; j < rectangles.Count; j++)
+            {
+                if(rectangles[i].IntersectsWith(rectangles[j]))
+                    return true;
+            }
+        }
+
+        return false;
+    }
 }
