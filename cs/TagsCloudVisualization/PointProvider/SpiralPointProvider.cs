@@ -1,10 +1,11 @@
 ﻿using System.Drawing;
+using TagsCloudVisualization.PointGenerator;
 
 namespace TagsCloudVisualization.PointProvider;
 
 public class SpiralPointProvider(Point centerCloud) : IPointProvider
 {
-    private readonly CircularCloudLayouter circularCloudLayouter = new(centerCloud);
+    private readonly CircularCloudLayouter circularCloudLayouter = new(centerCloud,10000, new SpiralPointGenerator(centerCloud));
 
     private readonly Random random = new();
 

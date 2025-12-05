@@ -1,5 +1,6 @@
 ﻿using System.Drawing;
 using FluentAssertions;
+using TagsCloudVisualization.PointGenerator;
 using TagsCloudVisualization.PointProvider;
 
 namespace TagsCloudVisualizationTest;
@@ -8,12 +9,16 @@ public class CircularCloudLayouterTest
 {
     private Point validCenter;
     private Size validRectangleSize;
+    private IPointGenerator pointGenerator;
+    private int maxPointsPerRectangle;
 
     [SetUp]
     public void Setup()
     {
         validCenter = new Point(1920 / 2, 1080 / 2);
         validRectangleSize = new Size(50, 30);
+        pointGenerator = new SpiralPointGenerator(validCenter);
+        maxPointsPerRectangle = 10000;
     }
 
     [TestCase(-500, 500)]
@@ -22,7 +27,7 @@ public class CircularCloudLayouterTest
     {
         var invalidCenter = new Point(centerX, centerY);
 
-        var act = () => new CircularCloudLayouter(invalidCenter);
+        var act = () => new CircularCloudLayouter(invalidCenter, maxPointsPerRectangle, pointGenerator);
 
         act.Should().Throw<ArgumentException>()
             .WithMessage("Center should be greater than 0");
@@ -30,14 +35,12 @@ public class CircularCloudLayouterTest
 
     [TestCase(-1)]
     [TestCase(0)]
-    public void SetMaxPointCount_ShouldThrowException_WhenInvalidCount(int count)
+    public void CircularCloudLayouter_ShouldThrowException_WhenInvalidCount(int count)
     {
-        var circularCloudLayouter = new CircularCloudLayouter(validCenter);
-
-        var act = () => circularCloudLayouter.SetMaxPointCount(count);
+        var act = () => new CircularCloudLayouter(validCenter, count, pointGenerator);
 
         act.Should().Throw<ArgumentException>()
-            .WithMessage("maxPointCount must be greater than 0");
+            .WithMessage("maxPointsPerRectangle must be greater than 0");
     }
 
     [TestCase(-100, 100)]
@@ -46,7 +49,7 @@ public class CircularCloudLayouterTest
     [TestCase(100, 0)]
     public void PutNextRectangle_ShouldThrowException_WhenInvalidRectangleSize(int rectangleWidth, int rectangleHeight)
     {
-        var circularCloud = new CircularCloudLayouter(validCenter);
+        var circularCloud = new CircularCloudLayouter(validCenter, maxPointsPerRectangle, pointGenerator);
 
         var act = () => circularCloud.PutNextRectangle(new Size(rectangleWidth, rectangleHeight));
 
@@ -58,8 +61,7 @@ public class CircularCloudLayouterTest
     [Test]
     public void PutNextRectangle_ShouldThrowException_WhenNotFoundPointInPoints()
     {
-        var circularCloud = new CircularCloudLayouter(validCenter);
-        circularCloud.SetMaxPointCount(1);
+        var circularCloud = new CircularCloudLayouter(validCenter, 1, pointGenerator);
 
         var act1 = () => circularCloud.PutNextRectangle(validRectangleSize);
         var act2 = () => circularCloud.PutNextRectangle(validRectangleSize);
@@ -73,7 +75,7 @@ public class CircularCloudLayouterTest
     [Test]
     public void PutNextRectangle_ShouldNotProduceIntersectingRectangles_WhenCalledMultipleTimes()
     {
-        var circularCloud = new CircularCloudLayouter(validCenter);
+        var circularCloud = new CircularCloudLayouter(validCenter, maxPointsPerRectangle, pointGenerator);
         var rectangles = new List<Rectangle>();
         var rectangleSize = new Size(20, 10);
         for (var i = 0; i < 50; i++)
@@ -81,7 +83,7 @@ public class CircularCloudLayouterTest
             var rect = circularCloud.PutNextRectangle(rectangleSize);
             rectangles.Add(rect);
         }
-        
+
         Geometry.HasIntersectingRectangles(rectangles).Should().BeFalse();
     }
 }
