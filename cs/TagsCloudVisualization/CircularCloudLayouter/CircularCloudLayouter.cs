@@ -1,15 +1,16 @@
 ﻿using System.Drawing;
 using TagsCloudVisualization.PointGenerator;
 
-namespace TagsCloudVisualization.PointProvider;
+
+namespace TagsCloudVisualization.CircularCloudLayouter;
 
 public class CircularCloudLayouter : ICloudLayouter
 {
-    private readonly List<Rectangle> _rectangles = [];
+    private readonly List<Rectangle> rectangles = [];
 
-    private readonly IPointGenerator _pointGenerator;
+    private readonly IPointGenerator pointGenerator;
 
-    private readonly int _maxPointsPerRectangle;
+    private readonly int maxPointsPerRectangle;
 
     public CircularCloudLayouter(Point center, int maxPointsPerRectangle, IPointGenerator pointGenerator)
     {
@@ -21,8 +22,8 @@ public class CircularCloudLayouter : ICloudLayouter
         if (maxPointsPerRectangle <= 0)
             throw new ArgumentException("maxPointsPerRectangle must be greater than 0");
 
-        _maxPointsPerRectangle = maxPointsPerRectangle;
-        _pointGenerator = pointGenerator;
+        this.maxPointsPerRectangle = maxPointsPerRectangle;
+        this.pointGenerator = pointGenerator;
     }
 
 
@@ -31,25 +32,25 @@ public class CircularCloudLayouter : ICloudLayouter
         if (rectangleSize.Width <= 0 || rectangleSize.Height <= 0)
             throw new ArgumentException("Rectangle size must be positive");
 
-        var points = _pointGenerator
+        var points = pointGenerator
             .GetPoints()
-            .Take(_maxPointsPerRectangle);
+            .Take(maxPointsPerRectangle);
 
 
         foreach (var point in points)
         {
             var rectangle = new Rectangle(point, rectangleSize);
-            for (var i = _rectangles.Count - 1; i >= 0; i--)
+            for (var i = rectangles.Count - 1; i >= 0; i--)
             {
-                if (_rectangles[i].IntersectsWith(rectangle))
+                if (rectangles[i].IntersectsWith(rectangle))
                     goto NextPoint;
             }
 
-            _rectangles.Add(rectangle);
+            rectangles.Add(rectangle);
             return rectangle;
             NextPoint: ;
         }
 
-        throw new ArgumentException($"Failed to find place for the {_rectangles.Count} rectangle");
+        throw new ArgumentException($"Failed to find place for the {rectangles.Count} rectangle");
     }
 }

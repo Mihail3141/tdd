@@ -8,7 +8,7 @@ public class SpiralPointGenerator : IPointGenerator
     private readonly double radius;
     private readonly double angle;
 
-    public SpiralPointGenerator(Point center, double radius = 10, double angle = double.Pi / 24)
+    public SpiralPointGenerator(Point center, double radius = 2, double angle = double.Pi/40)
     {
         if (center.X < 0 || center.Y < 0)
             throw new ArgumentException("Center coordinates must be non-negative");

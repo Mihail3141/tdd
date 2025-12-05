@@ -1,6 +1,6 @@
 ﻿using System.Drawing;
 
-namespace TagsCloudVisualization.Render;
+namespace TagsCloudVisualization;
 
 public class TagCloudRenderer(Size imageSize) : ICloudRenderer
 {
@@ -10,7 +10,7 @@ public class TagCloudRenderer(Size imageSize) : ICloudRenderer
 
         using var graphics = Graphics.FromImage(bitmap);
         graphics.Clear(Color.FromArgb(0, 34, 43));
-        var pen = new Pen(Color.FromArgb(212,85,0), 2);
+        var pen = new Pen(Color.FromArgb(212, 85, 0), 2);
         foreach (var rect in rectangles)
             graphics.DrawRectangle(pen, rect);
 
